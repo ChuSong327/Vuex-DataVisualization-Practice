@@ -28,8 +28,7 @@ export default {
                             .domain(this.salesByCountry.map((d) => {
                                 return d.BILLINGCOUNTRY;
                             }))
-                            // .range(d3.schemeCategory10);
-                            .range(["red", "yellow"]); 
+                            .range(d3.schemeAccent); 
 
             // Create a SVG tag and g tag as a container for the pie chart
             const vis = d3.select(".chartsalesbycountry")
@@ -58,16 +57,10 @@ export default {
                                 .append("svg:g")
                                     .attr("class", "slice")
                                 .append("svg:path")
-                                    .attr("fill", (d) => {
-                                        return color(d)
+                                    .attr("fill", (d, i) => {
+                                        return color(i)
                                     })
                                     .attr("d", arc);
-            console.log(color(this.salesByCountry[0]))
-            console.log(color(this.salesByCountry[1]))
-            console.log("this is the color", color())
-            console.log(this.salesByCountry.map((d) => {
-                return d.BILLINGCOUNTRY
-            }))
         }
     },
     created(){
