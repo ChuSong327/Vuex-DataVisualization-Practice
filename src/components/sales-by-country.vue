@@ -23,27 +23,51 @@ export default {
             "getSalesByCountry"
         ]),
         loadSalesByCountry(){
-            const r = 100;
-            const svg = d3.select(".chartsalesbycountry")
+            const r = 200;
+            const color = d3.scaleOrdinal()
+                            .domain(this.salesByCountry.map((d) => {
+                                return d.BILLINGCOUNTRY;
+                            }))
+                            // .range(d3.schemeCategory10);
+                            .range(["red", "yellow"]); 
+
+            // Create a SVG tag and g tag as a container for the pie chart
+            const vis = d3.select(".chartsalesbycountry")
                         .append("svg")
-                            .attr("width", "800px")
-                            .attr("height", "800px");
-            const rect = svg.selectAll("rect")
-                            .data(this.salesByCountry)
-            rect.enter()
-                .append("rect")
-                    .attr("x", (d, i) => {
-                        return i * 50 + 55;
-                    })
-                    .attr("y", (d) => {
-                        return 100;
-                    })
-                    .attr("width", 160)
-                    .attr("height", (d, i) => {
-                        console.log((d.COUNT / 100) + 50)
-                        return (d.COUNT / 100) + 50;
-                    })
-                    .attr("fill", "red")
+                            .attr("width", "500px")
+                            .attr("height", "500px")
+                        .append("g")
+                            .attr("transform", `translate(${ r+100 }, ${ r })`);
+
+            // arc generator with radius settings
+            const arc = d3.arc()
+                        .outerRadius(r)
+                        .innerRadius(0);
+
+            // pie generator and associate the pie instance with data value 
+            const pie = d3.pie()
+                            .value(d => {
+                                return d.COUNT
+                            })
+                            (this.salesByCountry);
+            
+            // Create path and assign color attribute
+            const arcs = vis.selectAll("g.slice")
+                            .data(pie)
+                            .enter()
+                                .append("svg:g")
+                                    .attr("class", "slice")
+                                .append("svg:path")
+                                    .attr("fill", (d) => {
+                                        return color(d)
+                                    })
+                                    .attr("d", arc);
+            console.log(color(this.salesByCountry[0]))
+            console.log(color(this.salesByCountry[1]))
+            console.log("this is the color", color())
+            console.log(this.salesByCountry.map((d) => {
+                return d.BILLINGCOUNTRY
+            }))
         }
     },
     created(){
